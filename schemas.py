@@ -22,13 +22,21 @@ from marshmallow import Schema, fields
 #     pets = fields.List(fields.Nested(PlainOwnerSchema()), dump_only=True)
 
 
-class ItemSchema(Schema):
+class PlainItemSchema(Schema):
     item_id = fields.Integer(dump_only=True)
     name = fields.Str()
     description = fields.Str()
 
 
-class PersonSchema(Schema):
+class PlainPersonSchema(Schema):
     id = fields.Integer(dump_only=True)
     name = fields.Str(required=True)
     klas = fields.Str()
+
+
+class ItemSchema(PlainItemSchema):
+    owner = fields.Str(required=True)
+
+
+class PersonSchema(PlainPersonSchema):
+    items = fields.List(fields.Nested(PlainItemSchema()), dump_only=True)

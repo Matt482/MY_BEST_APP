@@ -4,7 +4,7 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from db import db
 from models.item_model import Item
-from schemas import ItemSchema
+from schemas import PlainItemSchema, ItemSchema
 
 blt = Blueprint('item_res', __name__, description='This blueprint is for operation upon items')
 
@@ -24,15 +24,16 @@ class Items(MethodView):
     @blt.arguments(ItemSchema)
     @blt.response(201, ItemSchema)
     def post(self, stored_data, name):
+        # print(stored_data['owner'])
         try:
-            skus = Item(name=name, description=stored_data['description'])
+            skus = Item(**stored_data)
             db.session.add(skus)
             db.session.commit()
             return {"Message": f"Item {skus.name} succesfully created!"}
         except SQLAlchemyError as se:
             raise se
 
-    @blt.response(201, ItemSchema)
+    @blt.response(201, PlainItemSchema)
     def delete(self, name):
 
         # DODO: fix the validation of wrong input for query

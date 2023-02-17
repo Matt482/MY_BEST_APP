@@ -8,3 +8,5 @@ class PersonModel(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(20), unique=True, nullable=False)
     klas = db.Column(db.String(20), nullable=False)
+
+    items = db.relationship('Item', backref='person')
