@@ -12,10 +12,14 @@ blt = Blueprint('item_res', __name__, description='This blueprint is for operati
 @blt.route('/items/<string:name>')
 class Items(MethodView):
 
+    # dOdO: fix the validation
     @blt.response(200, ItemSchema)
     def get(self, name):
         my_item = Item.query.filter_by(name=name).first()
-        return my_item
+        if my_item is None:
+            return f"Cant find item {name}"
+        else:
+            return my_item
 
     @blt.arguments(ItemSchema)
     @blt.response(201, ItemSchema)
@@ -30,6 +34,8 @@ class Items(MethodView):
 
     @blt.response(201, ItemSchema)
     def delete(self, name):
+
+        # DODO: fix the validation of wrong input for query
         try:
             skus = Item.query.filter_by(name=name).first()
             db.session.delete(skus)
@@ -42,10 +48,10 @@ class Items(MethodView):
 @blt.route('/items')
 class ItemOne(MethodView):
 
-    @blt.response(201, ItemSchema)
+    @blt.response(201, ItemSchema(many=True))
     def get(self):
-        item_names = []
-        all_items = Item.query.all()
-        for item in all_items:
-            item_names.append(item.name)
-        return {'Pets': list(item_names)}
+        try:
+            all_items = Item.query.all()
+            return all_items
+        except SQLAlchemyError as se:
+            raise se

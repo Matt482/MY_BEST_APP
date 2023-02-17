@@ -4,8 +4,8 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from db import db
 
-from models.pet_modelo import Pet
-from models.owner_model import Owner
+# from models.pet_modelo import PetModel
+# from models.owner_model import OwnerModel
 
 from flask import request
 
@@ -14,7 +14,7 @@ blt = Blueprint('pet', __name__, description="This suits for pets from all diffe
 
 @blt.route('/pets')
 def get_pets_names():
-    all_pets = Pet.query.all()
+    all_pets = PetModel.query.all()
     res = []
     for pet in all_pets:
         res.append(pet.name)
@@ -25,7 +25,7 @@ def get_pets_names():
 @blt.route('/pet/<string:name>')
 def get_one_pet(name):
     try:
-        one_pet = Pet.query.filter_by(name=name).first()
+        one_pet = PetModel.query.filter_by(name=name).first()
         return {'Pets name': one_pet.name}, 200
 
     except SQLAlchemyError as se:
@@ -36,7 +36,7 @@ def get_one_pet(name):
 def create_pet():
     try:
         req = request.get_json()
-        pet = Pet(name=req['name'], age=req['age'], owner_id=req['owner'])
+        pet = PetModel(name=req['name'], age=req['age'], owner_id=req['owner'])
         # his_owner = Owner.query.filter_by(id=pet.owner_id).first()
         db.session.add(pet)
         db.session.commit()
@@ -49,7 +49,7 @@ def create_pet():
 @blt.route('/pet_del/<string:name>', methods=['DELETE'])
 def delete_pet(name):
     try:
-        own = Pet.query.filter_by(name=name).first()
+        own = PetModel.query.filter_by(name=name).first()
         db.session.delete(own)
         db.session.commit()
         return {"Message": f"pet {own.name} succesfully deleted!"}, 201

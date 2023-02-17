@@ -3,7 +3,7 @@ from flask.views import MethodView
 from db import db
 
 #from models.services_model import ServiceModel
-from models.owner_model import Owner
+# from models.owner_model import OwnerModel
 
 from flask import request
 

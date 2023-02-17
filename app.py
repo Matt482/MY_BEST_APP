@@ -9,6 +9,7 @@ from resources.services import blt as ServiceBlueprint
 from resources.pet_res import blt as PetBlueprint
 from resources.owner_res import blt as OwnerBlueprint
 from resources.item_res import blt as ItemBlueprint
+from resources.person import blt as PersonBlueprint
 
 
 def create_app():
@@ -37,5 +38,6 @@ def create_app():
     api.register_blueprint(PetBlueprint)
     api.register_blueprint(OwnerBlueprint)
     api.register_blueprint(ItemBlueprint)
+    api.register_blueprint(PersonBlueprint)
 
     return app
