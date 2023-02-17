@@ -8,6 +8,7 @@ from schemas import ItemSchema, PersonSchema
 
 blt = Blueprint('person_res', __name__, description='Thisdad sad awd awdadw')
 
+
 @blt.route('/person/<string:name>')
 class Person(MethodView):
 
