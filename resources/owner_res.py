@@ -11,6 +11,10 @@ from flask import request
 blt = Blueprint('owners', __name__, description="This suits for owners")
 
 
+class Owner(MethodView):
+    pass
+
+
 @blt.route('/owners')
 def get_owner_names():
     all_owners = Owner.query.all()

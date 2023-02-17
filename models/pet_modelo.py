@@ -8,3 +8,5 @@ class Pet(db.Model):
     age = db.Column(db.Integer)
 
     owner_id = db.Column(db.Integer, db.ForeignKey('owner.id'))
+
+
