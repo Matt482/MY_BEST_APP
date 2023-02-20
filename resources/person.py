@@ -1,4 +1,4 @@
-from flask_smorest import Blueprint
+from flask_smorest import Blueprint, abort
 from flask.views import MethodView
 from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 
@@ -17,17 +17,6 @@ class Person(MethodView):
         person = PersonModel.query.filter_by(name=name).first()
         return person
 
-    @blt.arguments(PlainPersonSchema)
-    @blt.response(201, PlainPersonSchema)
-    def post(self, payload, name):
-        try:
-            person = PersonModel(**payload)
-            db.session.add(person)
-            db.session.commit()
-            return {"Message": f"person succesfully created!!!"}
-        except IntegrityError as ie:
-            print('Cant create duplicate persons with same name!')
-            raise ie
 
     @blt.response(201, PlainPersonSchema)
     def delete(self, name):
@@ -45,6 +34,21 @@ class ManyPersons(MethodView):
 
         all_persons = PersonModel.query.all()
         return all_persons
+
+    @blt.arguments(PlainPersonSchema)
+    @blt.response(201, PlainPersonSchema)
+    def post(self, payload):
+        try:
+            person = PersonModel(**payload)
+            db.session.add(person)
+            db.session.commit()
+            return {"Message": f"person succesfully created!!!"}
+
+        except IntegrityError:
+            abort(400, message="a store with that name already exists!")
+
+        except SQLAlchemyError:
+            abort(500, message='Some error occured while creating an item')
 
 
 @blt.route('/persons/<string:name>/items')

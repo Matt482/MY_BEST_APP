@@ -40,3 +40,9 @@ class ItemSchema(PlainItemSchema):
 
 class PersonSchema(PlainPersonSchema):
     items = fields.List(fields.Nested(PlainItemSchema()), dump_only=True)
+
+
+class ItemUpdateSchema(Schema):
+    item_id = fields.Integer(dump_only=True)
+    name = fields.Str()
+    description = fields.Str()

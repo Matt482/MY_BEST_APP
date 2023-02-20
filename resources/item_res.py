@@ -4,7 +4,7 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from db import db
 from models.item_model import Item
-from schemas import PlainItemSchema, ItemSchema
+from schemas import PlainItemSchema, ItemSchema, ItemUpdateSchema
 
 blt = Blueprint('item_res', __name__, description='This blueprint is for operation upon items')
 
@@ -32,6 +32,11 @@ class Items(MethodView):
             return {"Message": f"Item {skus.name} succesfully created!"}
         except SQLAlchemyError as se:
             raise se
+
+    @blt.arguments(ItemUpdateSchema)
+    @blt.response(201, ItemUpdateSchema)
+    def put(self):
+        pass
 
     @blt.response(201, PlainItemSchema)
     def delete(self, name):
