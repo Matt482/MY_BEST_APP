@@ -4,7 +4,7 @@ from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 
 from db import db
 from models.person_model import PersonModel
-from schemas import PlainPersonSchema, PersonSchema
+from schemas import PlainPersonSchema, PersonSchema, ItemUpdateSchema
 
 blt = Blueprint('person_res', __name__, description='Thisdad sad awd awdadw')
 
@@ -14,13 +14,19 @@ class Person(MethodView):
 
     @blt.response(200, PlainPersonSchema)
     def get(self, name):
+        # person = PersonModel.query.get_or_404(name=name)
         person = PersonModel.query.filter_by(name=name).first()
         return person
 
+    @blt.response(200, ItemUpdateSchema)
+    def put(self, payload, name):
+
+        raise NotImplementedError("put person not implemented yet!!!")
 
     @blt.response(201, PlainPersonSchema)
     def delete(self, name):
         person = PersonModel.query.filter_by(name=name).first()
+        # person = PersonModel.query.get_or_404(name=name)
         db.session.delete(person)
         db.session.commit()
         return {"Message": f"person {name} succesfully deleted!"}
@@ -57,4 +63,5 @@ class PersonItems(ManyPersons):
     def get(self, name):
 
         one = PersonModel.query.filter_by(name=name).first()
+        # one = PersonModel.query.get_or_404(name=name)
         return one

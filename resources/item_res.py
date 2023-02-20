@@ -3,7 +3,7 @@ from flask.views import MethodView
 from sqlalchemy.exc import SQLAlchemyError
 
 from db import db
-from models.item_model import Item
+from models.item_model import ItemModel
 from schemas import PlainItemSchema, ItemSchema, ItemUpdateSchema
 
 blt = Blueprint('item_res', __name__, description='This blueprint is for operation upon items')
@@ -15,7 +15,7 @@ class Items(MethodView):
     # dOdO: fix the validation
     @blt.response(200, ItemSchema)
     def get(self, name):
-        my_item = Item.query.filter_by(name=name).first()
+        my_item = ItemModel.query.filter_by(name=name).first()
         if my_item is None:
             return f"Cant find item {name}"
         else:
@@ -26,7 +26,7 @@ class Items(MethodView):
     def post(self, stored_data, name):
         # print(stored_data['owner'])
         try:
-            skus = Item(**stored_data)
+            skus = ItemModel(**stored_data)
             db.session.add(skus)
             db.session.commit()
             return {"Message": f"Item {skus.name} succesfully created!"}
@@ -35,15 +35,24 @@ class Items(MethodView):
 
     @blt.arguments(ItemUpdateSchema)
     @blt.response(201, ItemUpdateSchema)
-    def put(self):
-        pass
+    def put(self, payload, name):
+        item = ItemModel.query.filter_by(name=name).first()
+        if item:
+            item.description = payload['description']
+            item.name = payload['name']
+        else:
+            item = ItemModel(**payload)
+
+        db.session.add(item)
+        db.session.commit()
+        return item
 
     @blt.response(201, PlainItemSchema)
     def delete(self, name):
 
         # DODO: fix the validation of wrong input for query
         try:
-            skus = Item.query.filter_by(name=name).first()
+            skus = ItemModel.query.filter_by(name=name).first()
             db.session.delete(skus)
             db.session.commit()
             return {"Message": f"item {name} succesfully deleted!"}, 201
@@ -57,7 +66,7 @@ class ItemOne(MethodView):
     @blt.response(201, ItemSchema(many=True))
     def get(self):
         try:
-            all_items = Item.query.all()
+            all_items = ItemModel.query.all()
             return all_items
         except SQLAlchemyError as se:
             raise se

@@ -46,3 +46,10 @@ class ItemUpdateSchema(Schema):
     item_id = fields.Integer(dump_only=True)
     name = fields.Str()
     description = fields.Str()
+    owner = fields.Str()
+
+
+class PersonUpdateSchema(Schema):
+    item_id = fields.Integer(dump_only=True)
+    name = fields.Str()
+    klas = fields.Str()
