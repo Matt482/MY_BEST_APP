@@ -12,7 +12,7 @@ blt = Blueprint('person_res', __name__, description='Thisdad sad awd awdadw')
 @blt.route('/person/<string:person_id>')
 class Person(MethodView):
 
-    @blt.response(200, PlainPersonSchema)
+    @blt.response(200, PersonSchema)
     def get(self, person_id):
         person = PersonModel.query.get_or_404(person_id)  # -> use of get or 404 maybe later
         return person
@@ -48,7 +48,7 @@ class Person(MethodView):
 @blt.route('/persons')
 class ManyPersons(MethodView):
 
-    @blt.response(200, PlainPersonSchema(many=True))
+    @blt.response(200, PersonSchema(many=True))
     def get(self):
         all_persons = PersonModel.query.all()
         return all_persons
@@ -60,13 +60,13 @@ class ManyPersons(MethodView):
             person = PersonModel(**payload)
             db.session.add(person)
             db.session.commit()
-            return {"Message": f"person succesfully created!!!"}
+            return {"Message": f"person successfully created!!!"}
 
         except IntegrityError:
-            abort(400, message="a store with that name already exists!")
+            abort(400, message="a person with that name already exists!")
 
         except SQLAlchemyError:
-            abort(500, message='Some error occured while creating an item')
+            abort(500, message='Some error occurred while creating an item')
 
 
 @blt.route('/persons/<string:name>/items')
