@@ -9,4 +9,5 @@ class ItemModel(db.Model):
     name = db.Column(db.String(30), nullable=False)
     description = db.Column(db.String(75))
 
-    owner = db.Column(db.String, db.ForeignKey('person.name'), nullable=False, unique=False)
+    owner_id = db.Column(db.Integer, db.ForeignKey('person.id'), nullable=False, unique=False)
+    persona = db.relationship('PersonModel', back_populates='items')

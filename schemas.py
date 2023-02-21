@@ -35,7 +35,8 @@ class PlainPersonSchema(Schema):
 
 
 class ItemSchema(PlainItemSchema):
-    owner = fields.Str(required=True)
+    owner_id = fields.Int(required=True, load_only=True)
+    persona = fields.Nested(PlainPersonSchema(), dump_only=True)
 
 
 class PersonSchema(PlainPersonSchema):

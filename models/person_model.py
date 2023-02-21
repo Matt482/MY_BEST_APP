@@ -9,4 +9,4 @@ class PersonModel(db.Model):
     name = db.Column(db.String(20), unique=True, nullable=False)
     klas = db.Column(db.String(20), nullable=False)
 
-    items = db.relationship('ItemModel', backref='person', lazy='dynamic')
+    items = db.relationship('ItemModel', back_populates='persona', cascade='all, delete')

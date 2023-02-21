@@ -9,40 +9,40 @@ from schemas import PlainPersonSchema, PersonSchema, PersonUpdateSchema
 blt = Blueprint('person_res', __name__, description='Thisdad sad awd awdadw')
 
 
-@blt.route('/person/<string:name_id>')
+@blt.route('/person/<string:person_id>')
 class Person(MethodView):
 
     @blt.response(200, PlainPersonSchema)
-    def get(self, name_id):
-        # person = PersonModel.query.get_or_404(name=name)  # -> use of get or 404 maybe later
-        try:
-            person = PersonModel.query.filter_by(id=name_id).first()
-            return person
-        except SQLAlchemyError as se:
-            raise se
+    def get(self, person_id):
+        person = PersonModel.query.get_or_404(person_id)  # -> use of get or 404 maybe later
+        return person
+        # try:
+        #     person = PersonModel.query.filter_by(id=name_id).first()
+        #     return person
+        # except SQLAlchemyError as se:
+        #     raise se
 
     @blt.arguments(PersonUpdateSchema)
     @blt.response(200, PersonUpdateSchema)
-    def put(self, payload, name_id):
+    def put(self, payload, person_id):
 
-        person = PersonModel.query.filter_by(id=name_id).first()
+        person = PersonModel.query.filter_by(id=person_id).first()
         if person:
             person.klas = payload['klas']
             person.name = payload['name']
         else:
-            person = PersonModel(id=name_id, **payload)
+            person = PersonModel(id=person_id, **payload)
 
         db.session.add(person)
         db.session.commit()
         return {"Message": "user updated!!!"}
 
-    @blt.response(201, PlainPersonSchema)
-    def delete(self, name_id):
-        person = PersonModel.query.filter_by(id=name_id).first()
+    def delete(self, person_id):
+        person = PersonModel.query.filter_by(id=person_id).first()
         # person = PersonModel.query.get_or_404(name=name)
         db.session.delete(person)
         db.session.commit()
-        return {"Message": f"ID {name_id} succesfully deleted!"}
+        return {"Message": f"ID {person_id} succesfully deleted!"}
 
 
 @blt.route('/persons')
@@ -74,6 +74,9 @@ class PersonItems(ManyPersons):
     @blt.response(200, PersonSchema)
     def get(self, name):
 
-        one = PersonModel.query.filter_by(name=name).first()
+        person = PersonModel.query.filter_by(name=name).first()
         # one = PersonModel.query.get_or_404(name=name)
-        return one
+        # items = []
+        # for item in person:
+        #     items.append(item.items)
+        return person.items

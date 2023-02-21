@@ -35,7 +35,6 @@ class Items(MethodView):
         db.session.commit()
         return item
 
-    @blt.response(201, ItemSchema)
     def delete(self, item_id):
 
         # DODO: fix the validation of wrong input for query
