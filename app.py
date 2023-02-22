@@ -1,7 +1,9 @@
 import os
+import secrets
 
 from flask import Flask
 from flask_smorest import Api
+from flask_jwt_extended import JWTManager
 
 import models
 from db import db
@@ -26,6 +28,10 @@ def create_app(db_url=None):
     app.config['SQLALCHEMY_TRACK_MODIFICATION'] = False
 
     db.init_app(app)
+
+    pwd = secrets.SystemRandom().getrandbits(128)
+    app.config['JWT_SECRET_KEY'] = '283115596964503999410326437429980209564'
+    jwt = JWTManager(app)
 
     with app.app_context():
         db.create_all()
