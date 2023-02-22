@@ -50,7 +50,7 @@ class Items(MethodView):
 @blt.route('/items')
 class ItemOne(MethodView):
 
-    @blt.response(201, ItemSchema(many=True))
+    @blt.response(200, ItemSchema(many=True))
     def get(self):
         all_items = ItemModel.query.all()
         return all_items

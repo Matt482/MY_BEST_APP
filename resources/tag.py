@@ -5,7 +5,8 @@ from sqlalchemy.exc import SQLAlchemyError
 from db import db
 from models.person_model import PersonModel
 from models.tag import TagModel
-from schemas import TagSchema
+from models.item_model import ItemModel
+from schemas import TagSchema, TagAndItemSchema
 
 blt = Blueprint('Tags', __name__, description='This blueprint is for operation upon tags')
 
@@ -44,6 +45,57 @@ class Tag(MethodView):
     def get(self, tag_id):
         tag = TagModel.query.get_or_404(tag_id)
         return tag
+
+    @blt.response(
+        202,
+        description='Deletes a tag if no item is tagged with it',
+        example={'message': 'Tag deleted!'}
+    )
+    @blt.alt_response(404, description='Tag not found')
+    @blt.alt_response(400, description='tag is assigned to one or more items. In this case the tag is not deleted!')
+    def delete(self, tag_id):
+        tag = TagModel.query.get_or_404(tag_id)
+        if not tag.items:
+            db.session.delete(tag)
+            db.session.commit()
+            return {"Message": "Tag succesfully deleted"}
+        abort(
+            400,
+            message='Could not delete tag. Make sure not a single item is associated within tag!'
+        )
+
+
+@blt.route('/item/<string:item_id>/tag/<string:tag_id>')
+class LinkTagsToItem(MethodView):
+
+    @blt.response(200, TagSchema)
+    def post(self, item_id, tag_id):
+
+        item = ItemModel.query.get_or_404(item_id)
+        tag = TagModel.query.get_or_404(tag_id)
+        item.tags.append(tag)
+        try:
+            db.session.add(item)
+            db.session.commit()
+        except SQLAlchemyError:
+            abort(500, message='An error occurred while inserting a tag')
+
+        return tag
+
+    @blt.response(200, TagAndItemSchema)
+    def delete(self, item_id, tag_id):
+        item = ItemModel.query.get_or_404(item_id)
+        tag = TagModel.query.get_or_404(tag_id)
+
+        item.tags.remove(tag)
+
+        try:
+            db.session.add(item)
+            db.session.commit()
+        except SQLAlchemyError:
+            abort(500, message='An error occurred while inserting a tag')
+
+        return {"Message": "Item removed from tag", "item": item, "tag": tag}
 
 
 @blt.route('/all_tags')
