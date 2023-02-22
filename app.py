@@ -11,6 +11,7 @@ from db import db
 from resources.item_res import blt as ItemBlueprint
 from resources.person import blt as PersonBlueprint
 from resources.tag import blt as TagBlueprint
+from resources.user import blt as UserBlueprint
 
 
 def create_app(db_url=None):
@@ -40,5 +41,6 @@ def create_app(db_url=None):
     api.register_blueprint(ItemBlueprint)
     api.register_blueprint(PersonBlueprint)
     api.register_blueprint(TagBlueprint)
+    api.register_blueprint(UserBlueprint)
 
     return app

@@ -1,7 +1,7 @@
 from db import db
 
 
-class User(db.Model):
+class UserModel(db.Model):
 
     __tablename__ = 'user'
 
