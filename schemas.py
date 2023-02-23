@@ -56,6 +56,6 @@ class TagAndItemSchema(Schema):
 
 
 class UserSchema(Schema):
-    id = fields.Integer(dump_only=True)
+    id = fields.Integer()
     username = fields.Str(required=True)
     password = fields.Str(required=True, load_only=True)  # -> load only rly important so noone can see pw

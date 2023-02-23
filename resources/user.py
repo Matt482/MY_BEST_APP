@@ -1,12 +1,15 @@
+from datetime import datetime, timezone, timedelta
+
 from flask_smorest import Blueprint, abort
 from flask.views import MethodView
-from sqlalchemy.exc import SQLAlchemyError
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt
+from flask import jsonify
 
 from passlib.hash import pbkdf2_sha256
 
 from db import db
 from models.user_model import UserModel
+from models.token import TokenBlocklist
 
 from schemas import UserSchema
 
@@ -44,8 +47,21 @@ class UserLogin(MethodView):
         abort(401, message='Invalid credentials.')
 
 
+@blt.route('/logout')
+class UserLogout(MethodView):
+    @jwt_required()
+    def post(self):
+        jti = get_jwt()['jti']
+        now = datetime.now(timezone.utc)
+
+        db.session.add(TokenBlocklist(jti=jti, created_at=now))
+        db.session.commit()
+        return jsonify(msg='JWT revoked')
+
+
 @blt.route('/user/<int:user_id>')
 class User(MethodView):
+
     @blt.response(201, UserSchema)
     def get(self, user_id):
         user = UserModel.query.get_or_404(user_id)

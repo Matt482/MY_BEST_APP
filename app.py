@@ -1,5 +1,6 @@
 import os
 import secrets
+from datetime import timedelta
 
 from flask import Flask, jsonify
 from flask_smorest import Api
@@ -12,6 +13,8 @@ from resources.item_res import blt as ItemBlueprint
 from resources.person import blt as PersonBlueprint
 from resources.tag import blt as TagBlueprint
 from resources.user import blt as UserBlueprint
+
+from models.token import TokenBlocklist
 
 
 def create_app(db_url=None):
@@ -31,14 +34,23 @@ def create_app(db_url=None):
     db.init_app(app)
 
     pwd = secrets.SystemRandom().getrandbits(128)
-    app.config['JWT_SECRET_KEY'] = '283115596964503999410326437429980209564'
+    app.config['JWT_SECRET_KEY'] = '283115596964503999410326437429980209564'  # -> pwd
+
+    ACCESS_EXPIRES = timedelta(hours=1, minutes=30)
+    app.config['JWT_ACCESS_TOKEN_EXPIRES'] = ACCESS_EXPIRES
     jwt = JWTManager(app)
+
+    @jwt.token_in_blocklist_loader
+    def check_if_token_revoked(jwt_header, jwt_payload: dict) -> bool:
+        jti = jwt_payload['jti']
+        token = db.session.query(TokenBlocklist.id).filter_by(jti=jti).scalar()
+        return token is not None
 
     @jwt.expired_token_loader
     def expired_token_callback(jwt_header, jwt_payload):
         return (
             jsonify({"Message": "The token has expired.", 'error': "token_expired"}),
-        401,
+            401,
         )
 
     @jwt.invalid_token_loader
