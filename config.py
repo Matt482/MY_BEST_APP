@@ -4,6 +4,14 @@ from datetime import timedelta
 
 class Config(object):
 
+    # DB_HOST = 'localhost' -> only works on localhost not in docker-container
+    # DB_HOST = 'mysql_db' -> if running on docker container add the same name under db service
+    # DB_PORT = '3306'
+    # DB_NAME = "testdbase"
+    # DB_USERNAME = "root"
+    # DB_PASSWORD = "root"
+    # DB_CHARSET = "utf8mb4"
+
     PROPAGATE_EXCEPTIONS = False
     API_TITLE = "Stores REST API"
     API_VERSION = 'v1'
