@@ -34,7 +34,7 @@ def create_app(db_url=None):
     db.init_app(app)
 
     pwd = secrets.SystemRandom().getrandbits(128)
-    app.config['JWT_SECRET_KEY'] = '283115596964503999410326437429980209564'  # -> pwd
+    app.config['JWT_SECRET_KEY'] = '283115596964503999410326437429980209564'  # -> pwd try os.getenv("env_key")
 
     ACCESS_EXPIRES = timedelta(hours=1, minutes=30)
     app.config['JWT_ACCESS_TOKEN_EXPIRES'] = ACCESS_EXPIRES
@@ -45,6 +45,14 @@ def create_app(db_url=None):
         jti = jwt_payload['jti']
         token = db.session.query(TokenBlocklist.id).filter_by(jti=jti).scalar()
         return token is not None
+
+    @jwt.revoked_token_loader
+    def revoke_token_callback(jwt_header, jwt_payload):
+        return (
+            jsonify({"description": "Token has been revoked!!!!!!!!!!!!!!!!!",
+                     "error": "token_revoked"}),
+            401,
+        )
 
     @jwt.expired_token_loader
     def expired_token_callback(jwt_header, jwt_payload):
