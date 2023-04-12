@@ -10,7 +10,8 @@ class Config(object):
     DB_NAME = "my_db_best"
     DB_USERNAME = "root"
     DB_PASSWORD = "root"
-    DB_CHARSET = "utf8mb4"
+    # DB_CHARSET = "utf8mb4"
+    DB_CHARSET = "utf8"
 
     # SQLALCHEMY_DATABASE_URI = "sqlite:///data_2.db"  # -> soon be deleted!
     SQLALCHEMY_DATABASE_URI = f"mysql://{DB_USERNAME}:{DB_PASSWORD}@{DB_HOST}:" \
