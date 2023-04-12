@@ -1,6 +1,7 @@
 from flask import Flask, jsonify
 from flask_smorest import Api
 from flask_jwt_extended import JWTManager
+from flask_migrate import Migrate
 
 import models
 from db import db
@@ -23,6 +24,8 @@ def create_app():
         app.config.from_object("config.DevelopmentConfig")
 
     db.init_app(app)
+    migrate = Migrate(app, db)
+
     jwt = JWTManager(app)
 
     @jwt.token_in_blocklist_loader
@@ -65,8 +68,8 @@ def create_app():
             401
         )
 
-    with app.app_context():
-        db.create_all()
+    # with app.app_context():
+    #     db.create_all()
 
     api = Api(app)
     api.register_blueprint(ItemBlueprint)

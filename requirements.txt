@@ -6,3 +6,5 @@ sqlalchemy
 flask-sqlalchemy
 flask-jwt-extended
 passlib
+mysqlclient
+Flask-Migrate
