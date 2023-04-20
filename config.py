@@ -4,8 +4,8 @@ from datetime import timedelta
 
 class Config(object):
 
-    DB_HOST = 'localhost'  # -> only works on localhost not in docker-container
-    # DB_HOST = 'mysql_db' # -> if running on docker container add the same name under db service
+    # DB_HOST = 'localhost'  # -> only works on localhost not in docker-container
+    DB_HOST = 'mysql_db'  # -> if running on docker container add the same name under db service
     DB_PORT = '3306'
     DB_NAME = "my_db_best"
     DB_USERNAME = "root"
