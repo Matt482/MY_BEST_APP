@@ -7,7 +7,6 @@ from flask_migrate import Migrate
 from db import db
 
 from resources.item_res import blt as ItemBlueprint
-from resources.person import blt as PersonBlueprint
 from resources.tag import blt as TagBlueprint
 from resources.user import blt as UserBlueprint
 
@@ -70,7 +69,6 @@ def create_app():
 
     from models.item_model import ItemModel
     from models.item_tags import ItemTags
-    from models.person_model import PersonModel
     from models.tag import TagModel
     from models.user_model import UserModel
 
@@ -79,7 +77,6 @@ def create_app():
 
     api = Api(app)
     api.register_blueprint(ItemBlueprint)
-    api.register_blueprint(PersonBlueprint)
     api.register_blueprint(TagBlueprint)
     api.register_blueprint(UserBlueprint)
 
