@@ -3,7 +3,7 @@ from flask_smorest import Api
 from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
 
-import models
+# import models
 from db import db
 
 from resources.item_res import blt as ItemBlueprint
@@ -68,8 +68,14 @@ def create_app():
             401
         )
 
-    # with app.app_context():
-    #     db.create_all()
+    from models.item_model import ItemModel
+    from models.item_tags import ItemTags
+    from models.person_model import PersonModel
+    from models.tag import TagModel
+    from models.user_model import UserModel
+
+    with app.app_context():
+        db.create_all()
 
     api = Api(app)
     api.register_blueprint(ItemBlueprint)
@@ -78,3 +84,10 @@ def create_app():
     api.register_blueprint(UserBlueprint)
 
     return app
+
+
+# if __name__=="__main__":
+#     app = create_app()
+#     app.run(debug=True,
+#             host='0.0.0.0',
+#             port=5000)

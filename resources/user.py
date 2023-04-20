@@ -1,4 +1,4 @@
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timezone
 
 from flask_smorest import Blueprint, abort
 from flask.views import MethodView
@@ -10,7 +10,6 @@ from passlib.hash import pbkdf2_sha256
 from db import db
 from models.user_model import UserModel
 from models.token import TokenBlocklist
-
 from schemas import UserSchema
 
 blt = Blueprint('User', __name__, description='This blueprint is for operation with users')
@@ -68,6 +67,7 @@ class User(MethodView):
         user = UserModel.query.get_or_404(user_id)
         return user
 
+    @jwt_required()
     def delete(self, user_id):
         user = UserModel.query.get_or_404(user_id)
         db.session.delete(user)

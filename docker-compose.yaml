@@ -1,0 +1,27 @@
+version: "3.8"
+services:
+  python_app:
+    build: .
+    ports:
+      - "5000:5000"
+#    command: sh -c "sleep 10s"
+    depends_on:
+      - mysql_db
+    volumes:
+      - /c/Users/Chova/OneDrive/Desktop/MY_BEST_APP:/app
+
+  mysql_db:
+    image: mysql:8.0.32-debian
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: my_db_best
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - /var/run/mysqld:/var/run/mysqld
+      - akoze:/var/lib/mysql
+
+volumes:
+  akoze:
+    driver: local
