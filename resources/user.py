@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 from flask_smorest import Blueprint, abort
 from flask.views import MethodView
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt
-from flask import jsonify
+from flask import jsonify, render_template, request
 
 from passlib.hash import pbkdf2_sha256
 
@@ -14,23 +14,52 @@ from schemas import UserSchema
 
 blt = Blueprint('User', __name__, description='This blueprint is for operation with users')
 
+@blt.route("/")
+def home():
+    return render_template('home.html')
+
+@blt.route("/sign-up", methods=['GET', 'POST'])
+def sign_up():
+    if request.method == "POST":
+        name = request.form.get('name')
+        pwd = request.form.get('password')
+        user = UserModel(username=name,
+                         password=pbkdf2_sha256.hash(pwd)
+                         )
+        db.session.add(user)
+        db.session.commit()
+        #return {"Message": f"User {user.username} succesfully created!!!"}
+        return render_template('sign_up.html')
+    else:
+        return render_template('sign_up.html')
+
+@blt.route("/login")
+def login():
+    return render_template('login.html')
+
 
 @blt.route('/register')
 class UserRegister(MethodView):
 
-    @blt.arguments(UserSchema)
-    def post(self, user_data):
-        if UserModel.query.filter(UserModel.username == user_data['username']).first():
+    def get(self):
+        return render_template('sign_up.html')
+
+    # @blt.arguments(UserSchema)
+    def post(self):
+        name = request.form.get('name')
+        pwd = request.form.get('password')
+        if UserModel.query.filter(UserModel.username == name).first():
             abort(409,
                   message='A user with that username already exists in db!')
 
-        user = UserModel(username=user_data['username'],
-                         password=pbkdf2_sha256.hash(user_data['password'])
+        user = UserModel(username=name,
+                         password=pbkdf2_sha256.hash(pwd)
                          )
         db.session.add(user)
         db.session.commit()
 
-        return {"Message": "user successfully created!"}, 201
+        # return {"Message": "user successfully created!"}, 201
+        return render_template('sign_up.html')
 
 
 @blt.route('/login')
