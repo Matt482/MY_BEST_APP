@@ -7,6 +7,8 @@ from db import db
 from models.item_model import ItemModel
 from schemas import ItemSchema, ItemUpdateSchema
 
+from flask import jsonify
+
 blt = Blueprint('item_res', __name__, description='This blueprint is for operation upon items')
 
 
@@ -20,7 +22,7 @@ class Items(MethodView):
         if my_item:
             return my_item
         else:
-            return f"Cant find item {item_id}", 400
+            return jsonify({"Message": f"Cant find item {item_id}"}), 400
 
     @blt.arguments(ItemUpdateSchema)
     @blt.response(201, ItemUpdateSchema)
@@ -28,7 +30,8 @@ class Items(MethodView):
         item = ItemModel.query.filter_by(item_id=item_id).first()
         if item:
             item.description = payload['description']
-            item.owner = payload['owner']
+            item.name = payload['name']
+            item.owner_id = payload['owner_id']
         else:
             item = ItemModel(item_id=item_id, **payload)
 
@@ -61,9 +64,11 @@ class ItemOne(MethodView):
     @blt.response(201, ItemSchema)
     def post(self, stored_data):
         try:
-            skus = ItemModel(**stored_data)
-            db.session.add(skus)
+            item = ItemModel(**stored_data)
+            db.session.add(item)
             db.session.commit()
-            return {"Message": f"Item {skus.name} succesfully created!"}
+
         except SQLAlchemyError as se:
             raise se
+
+        return {"Message": f"Item {item.name} succesfully created!"}

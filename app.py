@@ -7,7 +7,7 @@ from flask_migrate import Migrate
 from db import db
 
 from resources.item_res import blt as ItemBlueprint
-from resources.tag import blt as TagBlueprint
+# from resources.tag import blt as TagBlueprint
 from resources.user import blt as UserBlueprint
 
 from models.token import TokenBlocklist
@@ -68,8 +68,8 @@ def create_app():
         )
 
     from models.item_model import ItemModel
-    from models.item_tags import ItemTags
-    from models.tag import TagModel
+    # from models.item_tags import ItemTags
+    # from models.tag import TagModel
     from models.user_model import UserModel
 
     with app.app_context():
@@ -77,7 +77,7 @@ def create_app():
 
     api = Api(app)
     api.register_blueprint(ItemBlueprint)
-    api.register_blueprint(TagBlueprint)
+    # api.register_blueprint(TagBlueprint)
     api.register_blueprint(UserBlueprint)
 
     return app
